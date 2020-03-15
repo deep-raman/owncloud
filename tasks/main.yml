@@ -1,0 +1,127 @@
+---
+
+#- name: Install apache
+#  apt:
+#    name: apache2
+#    state: present
+#    update_cache: yes
+#
+#- name: Enable apache2 modules
+#  apache2_module:
+#    name: "{{ item }}"
+#    state: present
+#  with_items:
+#    - rewrite
+#    - headers
+#    - env
+#    - dir
+#    - mime
+#
+#- name: Upload owncloud apache configuration
+#  copy:
+#    src: owncloud.conf
+#    dest: /etc/apache2/sites-available/owncloud.conf
+#
+#- name: Enable owncloud site
+#  command: a2ensite owncloud.conf
+#
+#- name: Restart apache2
+#  systemd:
+#    name: apache2
+#    state: restarted
+#    enabled: yes
+#
+#- name: Install mariadb
+#  apt:
+#    name: "{{ item }}"
+#    state: present
+#    update_cache: yes
+#  with_items:
+#    - mariadb-server
+#    - mariadb-client
+#
+#- name: Install php
+#  apt:
+#    name: "{{ item }}"
+#    state: present
+#    update_cache: yes
+#  with_items:
+#    - php
+#    - php-common
+#    - libapache2-mod-php
+#    - php-mbstring 
+#    - php-xmlrpc
+#    - php-soap 
+#    - php-apcu 
+#    - php-smbclient 
+#    - php-ldap
+#    - php-redis
+#    - php-gd
+#    - php-xml
+#    - php-intl
+#    - php-json
+#    - php-imagick
+#    - php-mysql
+#    - php-cli
+#    - php-mcrypt
+#    - php-ldap
+#    - php-zip
+#    - php-curl
+
+- name: Secure mysql installation
+  expect:
+    command: mysql_secure_installation
+    responses:
+      'Enter current password for root \(enter for none\):': ''
+      'Set root password? [Y/n]:': 'y'
+      'New password:': 'B4TR4M4Npi2020'
+      'Re-enter new password:': 'B4TR4M4Npi2020'
+      'Remove anonymous users? [Y/n]:': 'y'
+      'Disallow root login remotely? [Y/n]:': 'y'
+      'Remove test database and access to it? [Y/n]:': 'y'
+      'Reload privilege tables now? [Y/n]:': 'y'
+  become: yes
+
+- name: Enable mariadb service
+  systemd:
+    name: mariadb
+    state: restarted
+    enabled: yes
+
+- name: Create owncloud database
+  mysql_db:
+    name: owncloud
+    state: present
+    login_user: root
+    login_password: "{{ MYSQL_PASSWORD }}"
+
+- name: Create owncloud user
+  mysql_user:
+    name: owncloud
+    password: "{{ OWNCLOUD_USER_PASSWORD }}"
+    priv: 'owncloud.*:ALL'
+    state: present
+    host: localhost
+    login_user: root
+    login_password: "{{ MYSQL_PASSWORD }}"
+
+- name: Download owncloud tar file
+  get_url:
+    url: "{{ OWNCLOUD_URL }}"
+    dest: /tmp/
+
+- name: Uncompress owncloud tar
+  unarchive: 
+    src: "/tmp/{{ OWNCLOUD_FILE }}"
+    dest: /var/www/html/
+    remote_src: yes
+  
+- name: Set permissions
+  file:
+    path: /var/www/html/owncloud
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 755
+    recurse: yes
+

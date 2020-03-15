@@ -1,0 +1,4 @@
+MYSQL_PASSWORD: "B4TR4M4Npi2020"
+OWNCLOUD_USER_PASSWORD: "B4TR4M4Npi2020"
+OWNCLOUD_FILE: "owncloud-10.4.0.tar.bz2"
+OWNCLOUD_URL: "https://download.owncloud.org/community/{{ OWNCLOUD_FILE }}"
