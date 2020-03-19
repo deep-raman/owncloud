@@ -1,0 +1,49 @@
+- name: Install mariadb
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - mariadb-server
+    - mariadb-client
+
+- name: Enable mariadb service
+  systemd:
+    name: mariadb
+    state: restarted
+    enabled: yes
+
+- name: Secure mysql installation
+  expect:
+    command: mysql_secure_installation
+    responses:
+      'Enter current password for root \(enter for none\): ': ''
+      'Set root password\? \[Y\/n\] ': 'Y'
+      'New password:': 'B4TR4M4Npi2020'
+      'Re-enter new password:': 'B4TR4M4Npi2020'
+      'Remove anonymous users\? \[Y\/n\] ': 'Y'
+      'Disallow root login remotely\? \[Y\/n\] ': 'Y'
+      'Remove test database and access to it\? \[Y\/n\] ': 'Y'
+      'Reload privilege tables now\? \[Y\/n\] ': 'Y'
+    echo: yes
+  become: yes
+    
+- name: Create owncloud database
+  mysql_db:
+    name: owncloud
+    state: present
+    login_user: root
+    login_password: "{{ MYSQL_PASSWORD }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create owncloud user
+  mysql_user:
+    name: owncloud
+    password: "{{ OWNCLOUD_USER_PASSWORD }}"
+    priv: 'owncloud.*:ALL'
+    state: present
+    host: localhost
+    login_user: root
+    login_password: "{{ MYSQL_PASSWORD }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+

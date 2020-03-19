@@ -1,0 +1,41 @@
+---
+
+- name: Install apache
+  apt:
+    name: apache2
+    state: present
+    update_cache: yes
+
+- name: Enable apache2 modules
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - rewrite
+    - headers
+    - env
+    - dir
+    - mime
+    - ssl
+
+- name: Upload owncloud apache configuration
+  template:
+    src: "{{ APACHE_CONF_LOCAL }}"
+    dest: "/etc/apache2/sites-available/{{ APACHE_CONF }}"
+
+- name: Upload owncloud ssl apache configuration
+  template:
+    src: "{{ APACHE_SSL_CONF_LOCAL }}"
+    dest: "/etc/apache2/sites-available/{{ APACHE_SSL_CONF }}"
+        
+- name: Enable owncloud site
+  command: a2ensite owncloud.conf
+
+- name: Enable owncloud ssl site
+  command: a2ensite owncloud-ssl.conf
+  
+- name: Restart apache2
+  systemd:
+    name: apache2
+    state: restarted
+    enabled: yes

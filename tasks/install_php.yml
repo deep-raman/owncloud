@@ -1,0 +1,29 @@
+---
+
+- name: Install php
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - php
+    - php-common
+    - libapache2-mod-php
+    - php-mbstring 
+    - php-xmlrpc
+    - php-soap 
+    - php-apcu 
+    - php-smbclient 
+    - php-ldap
+    - php-redis
+    - php-gd
+    - php-xml
+    - php-intl
+    - php-json
+    - php-imagick
+    - php-mysql
+    - php-cli
+    - php-mcrypt
+    - php-ldap
+    - php-zip
+    - php-curl

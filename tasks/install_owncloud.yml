@@ -1,0 +1,21 @@
+---
+
+- name: Download owncloud tar file
+  get_url:
+    url: "{{ OWNCLOUD_URL }}"
+    dest: /tmp/
+
+- name: Uncompress owncloud tar
+  unarchive: 
+    src: "/tmp/{{ OWNCLOUD_FILE }}"
+    dest: /var/www/html/
+    remote_src: yes
+  
+- name: Set permissions
+  file:
+    path: /var/www/html/owncloud
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0755
+    recurse: yes

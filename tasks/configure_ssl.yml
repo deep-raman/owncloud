@@ -1,0 +1,29 @@
+---
+
+- name: Create CSR directory
+  file:
+    path: "{{ SSL_CSR_PATH }}"
+    state: directory
+    mode: 0600
+
+- name: Generate an OpenSSL private key 
+  openssl_privatekey:
+    path: "{{ SSL_KEY_PATH }}/{{ SSL_KEY }}"
+    type: RSA
+    state: present
+    
+- name: Generate an OpenSSL Certificate Signing Request 
+  openssl_csr:
+    path: "{{ SSL_CSR_PATH }}/{{ SSL_CSR }}"
+    privatekey_path: "{{ SSL_KEY_PATH }}/{{ SSL_KEY }}"
+    country_name: "{{ SSL_COUNTRY }}"
+    organization_name: "{{ SSL_ORGANIZATION }}"
+    email_address: "{{ SSL_EMAIL }}"
+    common_name: "{{ SSL_COMMON_NAME }}"
+
+- name: Create OpenSSL self signed certificate
+  openssl_certificate:
+    path: "{{ SSL_CRT_PATH }}/{{ SSL_CRT }}"
+    privatekey_path: "{{ SSL_KEY_PATH }}/{{ SSL_KEY }}"
+    csr_path: "{{ SSL_CSR_PATH }}/{{ SSL_CSR }}"
+    provider: selfsigned

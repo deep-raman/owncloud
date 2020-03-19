@@ -1,0 +1,22 @@
+<VirtualHost *:80>
+     ServerAdmin admin@example.com
+     DocumentRoot {{ APACHE_DOCUMET_ROOT }}
+     ServerName {{ APACHE_SERVER_NAME }}
+       
+     Alias /owncloud "{{ APACHE_DOCUMET_ROOT }}"
+
+     <Directory {{ APACHE_DOCUMET_ROOT }}>
+        Options +FollowSymlinks
+        AllowOverride All
+        Require all granted
+          <IfModule mod_dav.c>
+            Dav off
+          </IfModule>
+        SetEnv HOME {{ APACHE_DOCUMET_ROOT }}
+        SetEnv HTTP_HOME {{ APACHE_DOCUMET_ROOT }}
+     </Directory>
+
+     ErrorLog ${APACHE_LOG_DIR}/error.log
+     CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>

@@ -1,0 +1,173 @@
+- name: Get service facts
+  service_facts:
+
+- name: Stop apache2 service
+  systemd:
+    name: apache2
+    state: stopped
+  when: "'apache2' in services"
+
+- name: Stop mariadb service
+  systemd:
+    name: mariadb
+    state: stopped
+  when: "'mariadb' in services"
+    
+- name: Delete selfsigned certificate {{ SSL_CRT_PATH }}/{{ SSL_CRT }}
+  file:
+    path: "{{ SSL_CRT_PATH }}/{{ SSL_CRT }}"
+    state: absent
+
+- name: Delete selfsigned key file {{ SSL_KEY_PATH }}/{{ SSL_KEY }}
+  file:
+    path: "{{ SSL_KEY_PATH }}/{{ SSL_KEY }}"
+    state: absent
+
+- name: Delete csr file {{ SSL_CSR_PATH }}/{{ SSL_CSR }}
+  file:
+    path: "{{ SSL_CSR_PATH }}/{{ SSL_CSR }}"
+    state: absent
+    
+- name: Delete owncloud installation /var/www/html/owncloud
+  file:
+    path: /var/www/html/owncloud
+    state: absent
+
+- name: Delete owncloud tar file /tmp/{{ OWNCLOUD_FILE }}
+  file:
+    path: "/tmp/{{ OWNCLOUD_FILE }}"
+    state: absent  
+    
+- name: Delete apache configurations /etc/apache2
+  file:
+    path: /etc/apache2
+    state: absent 
+
+- name: Delete mariadb configurations /etc/mysql
+  file:
+    path: /etc/mysql
+    state: absent
+
+- name: Delete /root/.my.cnf
+  file:
+    path: /root/.my.cnf
+    state: absent
+
+- name: Delete mysql data dir /var/lib/mysql
+  file:
+    path: /var/lib/mysql
+    state: absent
+
+- name: Uninstall python-pexpect package
+  apt:
+    name: python-pexpect
+    state: absent
+
+- name: Uninstall python-pymysql package
+  apt:
+    name: python-pymysql
+    state: absent
+
+- name: Uninstall apache2 package
+  apt:
+    name: apache2
+    purge: yes
+    state: absent
+
+- name: Uninstall libapache2-mod-php package
+  apt:
+    name: libapache2-mod-php
+    purge: yes
+    state: absent
+
+- name: Uninstall mysql-common package
+  apt:
+    name: mysql-common
+    purge: yes
+    state: absent
+ 
+- name: Uninstall mariadb-common package
+  apt:
+    name: mariadb-common
+    purge: yes
+    state: absent
+
+- name: Uninstall mariadb-client package
+  apt:
+    name: mariadb-client
+    purge: yes
+    state: absent
+
+- name: Uninstall mariadb-client-10.3 package
+  apt:
+    name: mariadb-client-10.3
+    purge: yes
+    state: absent
+
+- name: Uninstall mariadb-client-core-10.3 package
+  apt:
+    name: mariadb-client-core-10.3
+    purge: yes
+    state: absent
+
+- name: Uninstall mariadb-server package
+  apt:
+    name: mariadb-server
+    purge: yes
+    state: absent
+
+- name: Uninstall mariadb-server-core-10.3 package
+  apt:
+    name: mariadb-server-10.3
+    purge: yes
+    state: absent
+    
+- name: Uninstall mariadb-server-core-10.3 package
+  apt:
+    name: mariadb-server-core-10.3
+    purge: yes
+    state: absent
+
+- name: Uninstall php
+  apt:
+    name: "{{ item }}"
+    state: absent
+    purge: yes
+  with_items:
+    - php
+    - php-common
+    - php-mbstring 
+    - php-xmlrpc
+    - php-soap 
+    - php-apcu 
+    - php-smbclient 
+    - php-ldap
+    - php-redis
+    - php-gd
+    - php-xml
+    - php-intl
+    - php-json
+    - php-imagick
+    - php-mysql
+    - php-cli
+    - php-mcrypt
+    - php-ldap
+    - php-zip
+    - php-curl
+
+- name: Remove useless packages from the cache
+  apt:
+    autoclean: yes
+
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+
+- name: Reconfigure dpkg
+  command: dpkg --configure -a
+
+#- name: Shutdown server
+#  command: shutdown -h now
+  
+#- name: Reboot server for better cleanup
+#  command: shutdown -r 1
