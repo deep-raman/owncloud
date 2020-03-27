@@ -5,6 +5,11 @@
     url: "{{ OWNCLOUD_URL }}"
     dest: /tmp/
 
+- name: Create /var/www/html directory
+  file:
+    path: /var/www/html
+    state: directory
+
 - name: Uncompress owncloud tar
   unarchive: 
     src: "/tmp/{{ OWNCLOUD_FILE }}"
