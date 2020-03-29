@@ -2,10 +2,11 @@
 
 - name: Install php
   apt:
-    name: "{{ item }}"
+    name: "{{ packages }}"
     state: present
     update_cache: yes
-  with_items:
+  vars:
+    packages:
     - php
     - php-common
     - libapache2-mod-php

@@ -1,9 +1,10 @@
 - name: Install mariadb
   apt:
-    name: "{{ item }}"
+    name: "{{ packages }}"
     state: present
     update_cache: yes
-  with_items:
+  vars:
+    packages:
     - mariadb-server
     - mariadb-client
 
