@@ -54,7 +54,12 @@ Uninstall :
 
 	ansible-playbook --connection=local --inventory 127.0.0.1, owncloud.yaml --tags uninstall
 	
-	* Use with caution as it will delete the following directories : /etc/apache2, /etc/mysql/ , /var/lib/mysql, /var/www/html/owncloud
+	* Use with caution as it will delete the following directories :
+
+		/etc/apache2
+		/etc/mysql/
+		/var/lib/mysql
+		/var/www/html/owncloud
 
 
 Tested on
